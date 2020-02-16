@@ -26,6 +26,12 @@ function listExpiringSubscriptions(){
   
 }
 
+function diffDays(endTime){
+  var today = new Date();
+  var diff = endTime - today.getTime();
+  return parseInt(diff/(1000*60*60*24));
+}
+
 function sendNotificationEmail(subscription,diff){
   
   var domain = AdminReseller.Customers.get(subscription.customerId).customerDomain;
