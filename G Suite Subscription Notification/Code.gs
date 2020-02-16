@@ -1,5 +1,8 @@
+var RECIPIENT1 = 'insert_email';
+var RECIPIENT2 = 'insert_email';
+
 //parameter for snooze domain
-var WEB_APP_URL = ScriptApp.getService().getUrl();
+var WEB_APP_URL = 'insert_url_for_create_quotation_webapp';
 var SSID = 'insert_your_ssid';
 var SHEETNAME = 'Snooze domain';
 var SNOOZEDSHEETURL = 'insert_your_snoozed_ssid';
