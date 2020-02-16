@@ -6,5 +6,7 @@ To use this script
 
 The account that runs this script need access to Reseller API.
 (Optiona) You can uncomment the line
-//  deleteTableData();
+//  deleteTableData(10);
+10 is a defualt numbers of table that will be kept but you can change this number.
+
 in dailyTask() function if you need to maintain number of table in BQ
