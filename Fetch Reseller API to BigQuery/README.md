@@ -1,4 +1,4 @@
-This Script fetch data from Reseller API and update to BigQuery for analytics
+This script fetch data from Reseller API and update to BigQuery for analytics
 
 To use this script
 1. Update your BQ project and dataset in Code.gs
