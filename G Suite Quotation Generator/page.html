@@ -1,0 +1,165 @@
+<link rel="stylesheet" href="https://ssl.gstatic.com/docs/script/css/add-ons.css">
+<!-- The CSS package above applies Google styling to buttons and other elements. -->
+
+<style>
+  label,input{float:left;margin:5px}
+  label,input[type="submit"]{clear:left}
+  label{width:200px}
+  input[type="text"],input[type="tel"],input[type="email"],select,textarea{margin:2px;width:200px}
+  input[type="number"]{text-align: right;width:200px}
+  textarea {resize: both;height:100px}
+  .width-100 {width: 100%;}
+  .submitblock{margin-top: 20px;}
+</style>
+
+<div>
+  <form id="genQuotationForm">
+  
+  <fieldset>
+    <legend>Generate Quotation for <?=domain?></legend>
+    <input type="hidden" id="domain" value="<?=domain?>">
+    <label for="qno">Quotation Number
+      <input type="text" id="qno" placeholder="YYXXXXX">
+    </label>
+    <label for="email">Customer email
+      <input type="email" id="email">
+    </label>
+    <label for="seats">Seats
+      <input type="number" id="seats" value="<?=seats?>">
+    </label>
+    <label for="company">Company
+      <input type="text" id="company" value="<?=company?>">
+    </label>
+    <label for="contactName">Contact Name
+      <input type="text" id="contactName" value="<?=contactName?>">
+    </label>
+    <label for="address1">address 1
+      <input type="text" id="address1" value="<?=address1?>">
+    </label>
+    <label for="address2">address 2
+      <input type="text" id="address2" value="<?=address2?>">
+    </label>
+    <label for="address3">address 3
+      <input type="text" id="address3" value="<?=address3?>">
+    </label>
+    <label for="postal">Postal code
+      <input type="text" id="postal" value="<?=postal?>">
+    </label>
+    <label for="telephone">Telephone
+      <input type="text" id="telephone" value="<?=telephone?>">
+    </label>
+    <label for="exRate">Exchange rate (THB/USD)
+      <input type="number" id="exRate" value="34.00" step="0.01">
+    </label>
+    <label for="cost">Total Cost (THB)
+      <input type="number" id="cost" step="0.01" value="<?=cost?>">
+    </label>
+    <label for="unitPrice">Unit Price (THB)
+      <input type="number" id="unitPrice" step="0.01" value="<?=unitPrice?>">
+    </label>
+    <label for="validity">Validity (day)
+      <input type="number" id="validity" value="<?=validity?>">
+    </label>
+    <label for="payment">Payment</label><br>
+    <label>
+        <input type="radio" name="payment" id="payment" value="cash" checked>Cash<br>
+        <input type="radio" name="payment" id="payment" value="credit">Credit<br>
+    </label>
+  </fieldset>
+  
+  <div class="submitblock">
+    <button type="submit" class="blue" id="sendRequest">Generate Quotation</button>
+  </div>
+  </form>
+
+</div>
+
+<div id="console" style="display:none">
+  <p id="message"></p>
+  <button class="blue" id="backButton" style="display:none">Generate Another Quotation</button>
+</div>
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js">
+</script>
+
+<script>
+  /**
+   * On document load, assign click handlers to each button and try to load the
+   * user's origin and destination language preferences if previously set.
+   */
+  $(function() {
+    $('#genQuotationForm').submit(genQuotation);
+    $('#backButton').click(showForm);
+  });
+  
+  function showForm(){
+    //show form with blank value
+    var form = document.getElementById('genQuotationForm');
+    form.style.display = 'block';
+    form.reset();
+    
+    //hide message
+    document.getElementById('console').style.display = 'none';
+    document.getElementById('backButton').style.display= 'none';
+  }
+  
+  function showConsole(){
+    document.getElementById('genQuotationForm').style.display = 'none';
+    document.getElementById('message').innerHTML = 'กำลังทำ quotation ให้อยู่ ใจเย็นๆ นะคับ';
+    document.getElementById('console').style.display = 'block';
+  }
+  
+  function genQuotation(){
+    showConsole();
+    //prepare data
+    var domain = $('#domain').val();
+    var qno = $('#qno').val();
+    var email = $('#email').val();
+    var exRate = $('#exRate').val();
+    var payment = $('#payment').val();
+    var seats = $('#seats').val();
+    var company = $('#company').val();
+    var contactName = $('#contactName').val();
+    var address1 = $('#address1').val();
+    var address2 = $('#address2').val();
+    var address3 = $('#address3').val();
+    var postal = $('#postal').val();
+    var telephone = $('#telephone').val();
+    var cost = $('#cost').val();
+    var unitPrice = $('#unitPrice').val();
+    var validity = $('#validity').val();
+    
+    var obj = {
+               domain:domain,
+               qno:qno,
+               email:email,
+               seats:seats,
+               company:company,
+               contactName:contactName,
+               address1:address1,
+               address2:address2,
+               address3:address3,
+               postal:postal,
+               telephone:telephone,
+               exRate:exRate,
+               cost:cost,
+               unitPrice:unitPrice,
+               validity:validity,
+               payment:payment
+              };
+    
+    google.script.run
+    .withSuccessHandler(
+        function() {
+          console.log("success");
+          document.getElementById('message').innerHTML = 'เสร็จแล้วคับ';
+          document.getElementById('backButton').style.display= 'block';
+        })
+    .withFailureHandler(
+        function(){
+          console.log("fail in file page.html line 160");
+        }
+    )
+    .makeFileFromTemplate(obj);
+  }
+</script>
