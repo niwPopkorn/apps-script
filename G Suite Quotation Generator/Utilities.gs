@@ -25,3 +25,9 @@ function thisDateNextYear(time){
   date.setFullYear(date.getFullYear()+1);
   return date;
 }
+
+function getExportURL(ss,format){
+    var url = ss.getUrl();
+    var exportURL = url.substring(0,url.indexOf('edit'))+'export?format='+format+'&gridlines=false';
+    return exportURL;
+}
