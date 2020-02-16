@@ -1,5 +1,4 @@
-function deleteTableData(){
-  var daysKeep = 10;
+function deleteTableData(daysKeep){
   
   var projectId = BIGQUERY_PROJECTID;
   var datasetId = BIGQUERY_DATASETID;
