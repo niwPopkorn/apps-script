@@ -6,5 +6,5 @@ function dailyTask(){
   var datasetId = BIGQUERY_DATASETID;
   loadDataToBigQuery(projectId,datasetId);
   
-  //  deleteTableData();
+  //  deleteTableData(10);
 }
