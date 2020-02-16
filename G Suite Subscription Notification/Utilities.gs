@@ -87,6 +87,58 @@ function sendNotificationEmail(subscription,diff){
   }
   
 }
+  
+function sendConfirmationEmail(customerId,subscriptionId){
+  console.log('customerId', customerId);
+  console.log('subscriptionId', subscriptionId);
+  var domain, seats, startDate, endDate;
+  var subscription = AdminReseller.Subscriptions.get(customerId, subscriptionId);
+  
+  domain = subscription.customerDomain;
+  seats = subscription.seats.numberOfSeats;
+  
+  var endTime = new Date(Number(subscription.plan.commitmentInterval.endTime));
+  startDate = Utilities.formatDate(endTime, Session.getScriptTimeZone(), 'dd MMM yyyy');
+  var newEndTime = new Date(endTime.setFullYear(endTime.getFullYear()+1));
+  endDate = Utilities.formatDate(newEndTime,Session.getScriptTimeZone(),'dd MMM yyyy');
+  
+  var subscriptions = getSubscriptions(subscription.customerId);
+  
+  var template = HtmlService.createTemplateFromFile('Email: Renewal Confirmation');
+  template.domain = domain;
+  template.seats = seats;
+  template.startDate = startDate;
+  template.endDate = endDate;
+  template.subscriptions = subscriptions;
+  
+  var htmlBody = template.evaluate().getContent();
+  var subject = domain+': Renewal Order Confirmation '+Utilities.formatDate(new Date(), Session.getScriptTimeZone(), 'yyyy');
+  GmailApp.sendEmail(RECIPIENT2+','+RECIPIENT1, subject, '', {htmlBody:htmlBody});
+  console.log('send confirmation email');
+}
+  
+function sendCancelEmail(customerId,subscriptionId){
+  var domain, seats, startDate, endDate;
+  var subscription = AdminReseller.Subscriptions.get(customerId, subscriptionId);
+  
+  domain = subscription.customerDomain;
+  seats = subscription.seats.numberOfSeats;
+  
+  var endTime = new Date(Number(subscription.plan.commitmentInterval.endTime));
+  startDate = Utilities.formatDate(endTime, Session.getScriptTimeZone(), 'dd MMM yyyy');
+  var newEndTime = new Date(endTime.setFullYear(endTime.getFullYear()+1));
+  endDate = Utilities.formatDate(newEndTime,Session.getScriptTimeZone(),'dd MMM yyyy');
+  
+  var template = HtmlService.createTemplateFromFile('Email: Cancel Confirmation');
+  template.domain = domain;
+  template.seats = seats;
+  template.startDate = startDate;
+  template.endDate = endDate;
+  
+  var htmlBody = template.evaluate().getContent();
+  var subject = domain+': Subscription Cancel '+Utilities.formatDate(new Date(), Session.getScriptTimeZone(), 'yyyy');
+  GmailApp.sendEmail(RECIPIENT2+','+RECIPIENT1, subject, '', {htmlBody:htmlBody});
+}
 
 function getSnoozedDomain(){
   var sheet = SpreadsheetApp.openById(SSID).getSheetByName(SHEETNAME);
