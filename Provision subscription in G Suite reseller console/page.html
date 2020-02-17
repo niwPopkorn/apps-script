@@ -1,0 +1,121 @@
+<link rel="stylesheet" href="https://ssl.gstatic.com/docs/script/css/add-ons.css">
+<!-- The CSS package above applies Google styling to buttons and other elements. -->
+
+<style>
+  label{width:350px}
+  input[type="text"],input[type="tel"],input[type="number"],select,textarea{margin:2px;width:350px}
+  textarea {resize: both;height:100px}
+  .width-100 {width: 100%;}
+  .submitblock {margin-top: 20px;}
+  .showborder {border-style: solid;border-width: 1px;}
+</style>
+
+<div>
+  <form id="<?=formId?>">
+  
+  <fieldset>
+    <legend>Domain Provisioning</legend>
+    <div><label>CUSTOMER'S DOMAIN</label></div>
+    <div><input type="text" id="customerDomain" name="customerDomain" value="<?=customerDomain?>" required></div>
+    <div><label>ORGANIZATION NAME</label></div>
+    <div><input type="text" id="organizationName" name="organizationName" placeholder="Organization name" value="<?=organizationName?>" required></div>
+    <div><label>CONTACT INFORMATION</label></div>
+    <div><input type="text" id="contactName" name="contactName" placeholder="Contact name" value="<?=contactName?>" required></div>
+    <div><input type="text" id="contactEmail" name="contactEmail" placeholder="email สำหรับส่งอีเมลแจ้ง license" value="<?=contactEmail?>" required></div>
+    <div><label>Address</label></div>
+    <div><input type="text" id="addressLine1" name="addressLine1" placeholder="Street address line 1" value="<?=addressLine1?>" required></div>
+    <div><input type="text" id="addressLine2" name="addressLine2" placeholder="Street address line 2" value="<?=addressLine2?>"></div>
+    <div><input type="text" id="addressLine3" name="addressLine3" placeholder="Street address line 3" value="<?=addressLine3?>"></div>
+    <div><input type="text" id="locality" name="locality" placeholder="City" value="<?=locality?>" required></div>
+    <div><input type="text" id="region" name="region" placeholder="Province" value="<?=region?>"></div>
+    <div><input type="text" id="postalCode" name="postalCode" placeholder="Postal code" value="<?=postalCode?>"></div>
+    <div><input type="tel" id="phoneNumber" name="phoneNumber" placeholder="เบอร์โทรศัพท์สำหรับติดต่อลูกค้าเรื่อง deployment" value="<?=phoneNumber?>"></div>
+    <div><label>APPOINT A PRIMARY ADMIN</label></div>
+    <div style="width:354px">
+        <input type="text" id="adminFirstname" name="adminFirstname" placeholder="First name" style="width:172px;float:left;" value="<?=adminFirstname?>">
+        <input type="text" id="adminLastname" name="adminLastname" placeholder="Last name" style="width:172px;float:right;" value="<?=adminLastname?>">
+    </div>
+    <div><input type="text" id="adminUsername" name="adminUsername" placeholder="Username" value="<?=adminUsername?>"></div>
+    <div><input type="text" id="alternateEmail" name="alternateEmail" placeholder="Admin's alternate email for sending the login details" value="<?=alternateEmail?>"></div>
+    <div><label>Product</label></div>
+    <div>
+      <input type="radio" name="skuId" value="Google-Apps-For-Business" 
+      <?if(skuId == "Google-Apps-For-Business" || skuId == "G Suite Basic"){?>
+      checked>G Suite Basic<br>
+      <?}else{?>
+      >G Suite Basic<br>
+      <?}?>
+      
+      <input type="radio" name="skuId" value="Google-Apps-Unlimited" 
+      <?if(skuId == "Google-Apps-Unlimited" || skuId == "G Suite Business"){?>
+      checked>G Suite Business<br>
+      <?}else{?>
+      >G Suite Business<br>
+      <?}?>
+    </div>
+    <div><label>No. of licenses</label></div>
+    <div><input type="number" id="seats" name="seats" min="1" value="<?=seats?>"></div>
+  </fieldset>
+  <div class="submitblock">
+    <button class="blue" id="sendRequest">Provision Domain</button>
+  </div>
+  </form>
+
+</div>
+
+<div id="console" style="display:none">
+  <p id="message"></p>
+  <button class="blue" id="backButton" style="display:none">Submit Another Request</button>
+</div>
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js">
+</script>
+
+<script>
+  /**
+   * On document load, assign click handlers to each button and try to load the
+   * user's origin and destination language preferences if previously set.
+   */
+  $(function() {
+    $('#sendRequest').click(deployDomain);
+    $('#backButton').click(showForm);
+  });
+  
+  function showForm(){
+    //show form with blank value
+    var form = document.getElementById('<?=formId?>');
+    form.style.display = 'block';
+    form.reset();
+    
+    //hide message
+    document.getElementById('console').style.display = 'none';
+    document.getElementById('backButton').style.display= 'none';
+  }
+  
+  function showConsole(){
+    document.getElementById('<?=formId?>').style.display = 'none';
+    document.getElementById('message').innerHTML = 'กำลังส่ง request ให้อยู่ ใจเย็นๆ นะคับ';
+    document.getElementById('console').style.display = 'block';
+  }
+  
+  function deployDomain(e){
+    e.preventDefault();
+    showConsole();
+    
+    var formElement = document.getElementById('<?=formId?>');
+    
+    google.script.run
+    .withSuccessHandler(
+        function(message) {
+          document.getElementById('message').innerHTML = message;
+          document.getElementById('backButton').style.display= 'block';
+        })
+    .withFailureHandler(
+        function(){
+          document.getElementById('message').innerHTML = "fail to execute";
+          document.getElementById('backButton').style.display= 'block';
+        }
+    )
+    .HTMLSubmitHandler(formElement);
+  }
+</script>
