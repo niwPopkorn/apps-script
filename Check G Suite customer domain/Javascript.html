@@ -1,0 +1,135 @@
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+
+<script>
+  $(function() {
+    $('#check-button').click(submit);
+    $('#domain').keypress(keyPressHandler);
+  });
+  
+  function keyPressHandler(e){
+    if(e.keyCode == 13){
+      submit();
+    }
+  }
+  
+  function submit(){
+    $('#display-card').removeClass("hidden");
+    $('#spinner-div').removeClass("hidden");
+    $('#display-message-div').addClass("hidden");
+    
+    var domain = $('#domain').val();
+    
+    domain = domain.toLowerCase();
+    domain = domain.replace(/\s/g,"");
+    
+    google.script.run
+      .withSuccessHandler(showMessage)
+      .isCustomer(domain);
+  }
+  
+  function showMessage(customer){
+    console.log('customerObj', customer);
+    
+    var htmlString = '';
+    htmlString += '<h4>'+customer.domain+"</h4>";
+    
+    if(customer.details == undefined){
+      //this domain is not in customer list
+      $('#spinner-div').addClass("hidden");
+      
+      htmlString += '<h5 class="red">&#10008 NOT our customer</h5>';
+      
+      if(customer.isRegistered == true){
+        htmlString += '<h5 class="blue">&#10033 Required transfer token</h5>';
+      }
+      
+      if(customer.isRegistered == false){
+        htmlString += '<h5 class="lightGreen">&#10004 Not required transfer token</h5>';
+      }
+      
+      var noAccessDomains = customer.noAccessDomains;
+      
+      htmlString += 'However we can not access these domains, it may possible that '+customer.domain+' is in one of these customers<br><br>';
+      
+      for(var i in noAccessDomains){
+        htmlString += '<li>'+noAccessDomains[i]+'</li>';
+      }
+      
+      $('#display-message-div').html(htmlString);
+      
+    }else{
+      //primary domain is
+      
+      
+      htmlString += '<h5 class="green">&#10004 Our customer</h5>';
+
+      var subscriptions = customer.subscriptions
+      
+      for(var i in subscriptions){
+      
+        var subscription = subscriptions[i];
+        if(subscription.seats && subscription.seats.licensedNumberOfSeats !== 0){
+        
+        console.log(i);
+        
+        console.log(JSON.stringify(subscription.seats));
+        htmlString += '<b>SKU Name</b>:'+subscription.skuName+'<br>';
+        console.log('line 75');
+        htmlString += '<b>Seats</b>:'+subscription.seats.licensedNumberOfSeats+'<br>';
+        console.log('line 77');
+        htmlString += '<b>licensedNumberOfSeats</b>:'+subscription.seats.licensedNumberOfSeats+'<br>';
+        console.log('line 79');
+        htmlString += '<b>maximumNumberOfSeats</b>:'+subscription.seats.maximumNumberOfSeats+'<br>';
+        htmlString += '<b>numberOfSeats</b>:'+subscription.seats.numberOfSeats+'<br><br>';
+        
+        if(subscription.plan.commitmentInterval !== undefined){
+        htmlString += '<b>endTime</b>:'+new Date(Number(subscription.plan.commitmentInterval.endTime))+'<br><br>';
+        }
+        }
+        
+      }
+      
+      htmlString += '<b>Cloud DNS:</b>'+customer.cloudDns+'<br>';
+      
+      htmlString += '<hr>';
+      
+      var domains = customer.details;
+      
+      for(var i in domains){
+        if(domains[i].isPrimary == true){
+          htmlString += '<b>Primary</b>:'+domains[i].domainName+'<br>';
+        }else{
+          htmlString += '<b>Secondary</b>:'+domains[i].domainName+'<br>';
+        }
+      
+        if(domains[i].domainAliases){
+          var domainAliases = domains[i].domainAliases;
+          for(var ii in domainAliases){
+            htmlString += '<b>Alias of '+domains[i].domainName+'</b>:'+domainAliases[ii].domainAliasName+'<br>';
+          }
+        }
+      }
+      
+      htmlString += '<hr>';
+      
+      var superAdmins = customer.superAdmins;
+      var delegatedAdmins = customer.delegatedAdmins;
+      
+      for(var i in superAdmins){
+        var admin = superAdmins[i];
+        htmlString += '<b>Super admin</b>:'+admin.primaryEmail+'<br>';
+      }
+      
+      for(var i in delegatedAdmins){
+        var admin = delegatedAdmins[i];
+        htmlString += '<b>Delegated admin</b>:'+admin.primaryEmail+'<br>';
+      }
+      
+      $('#spinner-div').addClass("hidden");
+      $('#display-message-div').html(htmlString);
+      
+    }
+    
+    $('#display-message-div').removeClass("hidden");
+  }
+</script>
