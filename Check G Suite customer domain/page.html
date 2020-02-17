@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <?!= include('Stylesheet');?>
+    <script src="https://code.getmdl.io/1.2.1/material.min.js"></script>
+  </head>
+  <body>
+    
+    <div class="mdl-grid">
+      <div class="mdl-cell mdl-cell--12-col" id="container-div">
+        <div class="mdl-card mdl-shadow--2dp">
+          <div class="mdl-card__title">
+            <h2 class="mdl-card__title-text">Check Domain</h2>
+          </div>
+      
+          <div class="mdl-card__supporting-text">
+            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+              <input class="mdl-textfield__input" type="text" id="domain" value="ktb.co.th">
+              <label class="mdl-textfield__label" for="sample1">Domain</label>
+            </div>
+          </div>
+        
+          <div class="mdl-card__actions mdl-card--border">
+            <button class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect mdl-button--accent" id="check-button">Check Domain</button>
+          </div>
+      
+        </div>    
+      
+      </div>
+      
+      <div class="mdl-cell">
+          <div class="mdl-card mdl-shadow--2dp hidden" id="display-card">
+            <div class="mdl-card__title">
+              <h2 class="mdl-card__title-text">Results</h2>
+            </div>
+            <div class="mdl-card__supporting-text">
+              <div class="mdl-spinner mdl-js-spinner is-active" id="spinner-div"></div>
+              <div id="display-message-div"></div>
+            </div>
+            
+          </div>
+      </div>
+    
+    </div>
+  
+    
+    <?!= include('Javascript');?>
+  </body>
+</html>
+
+
