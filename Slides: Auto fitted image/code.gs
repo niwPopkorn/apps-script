@@ -1,3 +1,6 @@
+//To-do
+//deploy as add-on
+
 function onOpen(e) {
   SlidesApp.getUi()
       .createAddonMenu()
