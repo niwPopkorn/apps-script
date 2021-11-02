@@ -4,12 +4,35 @@
 function onOpen(e) {
   SlidesApp.getUi()
       .createAddonMenu()
-      .addItem('Fit image', 'main')
+      .addItem('All slide', 'allSlide')
+      .addItem('Selected slide', 'selectedSlide')
       .addItem('About', 'showAbout')
       .addToUi();
 }
 
-function main(){
+/**
+ * Runs when the add-on is installed.
+ *
+ * @param {object} e The event parameter for a simple onInstall trigger. To
+ *     determine which authorization mode (ScriptApp.AuthMode) the trigger is
+ *     running in, inspect e.authMode. (In practice, onInstall triggers always
+ *     run in AuthMode.FULL, but onOpen triggers may be AuthMode.LIMITED or
+ *     AuthMode.NONE).
+ */
+function onInstall(e) {
+  onOpen(e);
+}
+
+function allSlide(){
+  var slide = SlidesApp.getActivePresentation();
+  var docId = slide.getId();
+  
+  var slides = slide.getSlides();
+
+  processSlides(docId,slides);
+}
+
+function selectedSlide(){
   var slide = SlidesApp.getActivePresentation();
   var docId = slide.getId();
   var selection = slide.getSelection();
@@ -21,10 +44,11 @@ function main(){
 }
 
 function processSlides(docId,pageRange) {
-  var pageSize = getPageSize(docId);
+  var slide = SlidesApp.getActivePresentation();
+  // var pageSize = getPageSize(docId);
   
-  pageRange.map(function (slide){
-    var images = slide.getImages();
+  pageRange.map(function (page){
+    var images = page.getImages();
     image = images[0];
     
     var imgWidth = image.getWidth();
@@ -32,26 +56,16 @@ function processSlides(docId,pageRange) {
 
     if(imgWidth > imgHeight){
       console.log('run full width');
-      var targetWidth = convertEMUtoPt(pageSize.width.magnitude);
+      var targetWidth = slide.getPageWidth();
       var targetHeight = targetWidth*imgHeight/imgWidth;
       image.setLeft(0).setWidth(targetWidth).setHeight(targetHeight).alignOnPage(SlidesApp.AlignmentPosition.CENTER); 
     }else{
       console.log('run full height');
-      var targetHeight = convertEMUtoPt(pageSize.height.magnitude);
+      var targetHeight = slide.getPageHeight();
       var targetWidth = targetHeight*imgWidth/imgHeight;
       image.setTop(0).setHeight(targetHeight).setWidth(targetWidth).alignOnPage(SlidesApp.AlignmentPosition.CENTER);
     }
   });
-}
-
-// require Slides advanced service
-function getPageSize(docId){
-  var slides = Slides.Presentations.get(docId);
-  return slides.pageSize;
-}
-
-function convertEMUtoPt(emu){
-  return emu/12700;
 }
 
 /**
